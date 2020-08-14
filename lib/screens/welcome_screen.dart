@@ -1,6 +1,9 @@
+import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
+import 'package:flash_chat/widgets/login_register_button_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcomescreen';
@@ -16,6 +19,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
+    animationContoller();
+  }
+
+  void animationContoller() {
     controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
@@ -24,12 +31,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     // animation = CurvedAnimation(parent: controller, curve: Curves.bounceOut);
 
     animation =
-        ColorTween(begin: Colors.green, end: Colors.blue).animate(controller);
+        ColorTween(begin: Colors.black, end: Colors.white).animate(controller);
     controller.forward();
 
     controller.addListener(() {
       setState(() {});
-      print(animation.value);
     });
   }
 
@@ -42,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: animation.value,
+      backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -58,56 +64,37 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     height: 60.0,
                   ),
                 ),
-                Text(
-                  'Flash Chat',
-                  style: TextStyle(
-                    fontSize: 45.0,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                  ),
+                TypewriterAnimatedTextKit(
+                  speed: Duration(milliseconds: 300),
+                  isRepeatingAnimation: false,
+                  
+                  onTap: () {},
+                  text: [
+                    "Flash Chat",
+                  ],
+                  textStyle: kWelcomeScreenHeadinTextStyle,
+                  // or Alignment.topLeft
                 ),
               ],
             ),
             SizedBox(
               height: 48.0,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                elevation: 5.0,
-                color: Colors.lightBlueAccent,
-                borderRadius: BorderRadius.circular(30.0),
-                child: MaterialButton(
-                  onPressed: () {
-                    //Go to login screen.
-                    Navigator.pushNamed(context, LoginScreen.id);
-                  },
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: Text(
-                    'Log In',
-                  ),
-                ),
-              ),
+            LoginRegisterWidget(
+              color: Colors.lightBlueAccent,
+              onPressed: () {
+                //Go to login screen.
+                Navigator.pushNamed(context, LoginScreen.id);
+              },
+              text: 'Log In',
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(30.0),
-                elevation: 5.0,
-                child: MaterialButton(
-                  onPressed: () {
-                    //Go to registration screen.
-                    Navigator.pushNamed(context, RegistrationScreen.id);
-                  },
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: Text(
-                    'Register',
-                  ),
-                ),
-              ),
+            LoginRegisterWidget(
+              color: Colors.blue,
+              onPressed: () {
+                //Go to login screen.
+                Navigator.pushNamed(context, RegistrationScreen.id);
+              },
+              text: 'Register',
             ),
           ],
         ),
