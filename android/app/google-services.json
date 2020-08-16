@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "344357333995",
+    "firebase_url": "https://flash-chat-f2050.firebaseio.com",
+    "project_id": "flash-chat-f2050",
+    "storage_bucket": "flash-chat-f2050.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344357333995:android:853db8f1307b593fff87ae",
+        "android_client_info": {
+          "package_name": "co.uday.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344357333995-603lech9r21jefro8hirrqdv656avbal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd1Q06qzu_NXSqGP2CJaI-zYp40B2pcG4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "344357333995-603lech9r21jefro8hirrqdv656avbal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
