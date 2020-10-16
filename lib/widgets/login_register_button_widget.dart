@@ -19,12 +19,17 @@ class LoginRegisterWidget extends StatelessWidget {
         color: color,
         borderRadius: BorderRadius.circular(30.0),
         child: MaterialButton(
+          
           onPressed: onPressed,
           minWidth: 200.0,
           height: 42.0,
           child: Text(
             text,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: Color(0xFF4B2090),
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

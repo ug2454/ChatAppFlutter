@@ -1,9 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/push_notifications.dart';
+import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flash_chat/widgets/login_register_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/scheduler.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcomescreen';
@@ -13,13 +17,29 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
+  final _auth = FirebaseAuth.instance;
+  User loggedInUser;
   AnimationController controller;
   Animation animation;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     animationContoller();
+    isUserLoggedIn();
+  }
+
+  void isUserLoggedIn() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).pushReplacementNamed(ChatScreen.id);
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   void animationContoller() {
@@ -48,7 +68,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: kPageBackgroundColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -60,17 +80,20 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 Hero(
                   tag: 'logo',
                   child: Container(
-                    child: Image.asset('images/logo.png'),
+                    child: Image.asset('images/whatsapplogo.png'),
                     height: 60.0,
                   ),
+                ),
+                SizedBox(
+                  width: 50.0,
                 ),
                 TypewriterAnimatedTextKit(
                   speed: Duration(milliseconds: 300),
                   isRepeatingAnimation: false,
-                  
+
                   onTap: () {},
                   text: [
-                    "Flash Chat",
+                    "Konnect",
                   ],
                   textStyle: kWelcomeScreenHeadinTextStyle,
                   // or Alignment.topLeft
@@ -81,7 +104,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               height: 48.0,
             ),
             LoginRegisterWidget(
-              color: Colors.lightBlueAccent,
+              color: Colors.white,
               onPressed: () {
                 //Go to login screen.
                 Navigator.pushNamed(context, LoginScreen.id);
@@ -89,7 +112,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               text: 'Log In',
             ),
             LoginRegisterWidget(
-              color: Colors.blue,
+              color: Colors.white,
               onPressed: () {
                 //Go to login screen.
                 Navigator.pushNamed(context, RegistrationScreen.id);

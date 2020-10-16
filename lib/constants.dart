@@ -18,13 +18,12 @@ const kMessageContainerDecoration = BoxDecoration(
   ),
 );
 
-const kWelcomeScreenHeadinTextStyle = TextStyle(
-  fontSize: 45.0,
-  fontWeight: FontWeight.w900,
-  color: Colors.black,
-);
+const kWelcomeScreenHeadinTextStyle =
+    TextStyle(fontSize: 45.0, fontWeight: FontWeight.w900, color: Colors.white);
 
 const kTextFieldInputDecoration = InputDecoration(
+  filled: true,
+  fillColor: Colors.white,
   hintText: 'Enter your password.',
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
   border: OutlineInputBorder(
@@ -39,3 +38,6 @@ const kTextFieldInputDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
 );
+
+//background color
+const kPageBackgroundColor = Color(0xFF4B2090);

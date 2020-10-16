@@ -18,10 +18,42 @@ class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
   // final _loginLineController = TextEditingController();
 
+  void _saveForm() async {
+    _auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((result) {
+      setState(() {
+        showSpinner = false;
+      });
+      Navigator.pushReplacementNamed(context, ChatScreen.id);
+    }).catchError((err) {
+      print(err.message);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(err.message),
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      showSpinner = false;
+                    });
+                  },
+                  child: Text('Ok'))
+            ],
+          );
+        },
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: kPageBackgroundColor,
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: Padding(
@@ -34,8 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Hero(
                   tag: 'logo',
                   child: Container(
-                    height: 200.0,
-                    child: Image.asset('images/logo.png'),
+                    height: 100.0,
+                    child: Image.asset('images/whatsapplogo.png'),
                   ),
                 ),
               ),
@@ -69,20 +101,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   setState(() {
                     showSpinner = true;
                   });
-                  try {
-                    final loginUser = await _auth.signInWithEmailAndPassword(
-                        email: email, password: password);
-                    if (loginUser != null) {
-                      Navigator.pushNamed(context, ChatScreen.id);
-                    }
-                    setState(() {
-                      showSpinner = false;
-                    });
-                  } catch (e) {
-                    print(e);
-                  }
+                  _saveForm();
                 },
-                color: Colors.lightBlueAccent,
+                color: Colors.white,
                 text: 'Log In',
               ),
             ],

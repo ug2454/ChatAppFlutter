@@ -1,11 +1,15 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flash_chat/screens/login_screen.dart';
+import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 
 final _firestore = FirebaseFirestore.instance;
+final GlobalKey<InnerDrawerState> _innerDrawerKey =
+    GlobalKey<InnerDrawerState>();
 User loggedInUser;
 
 class ChatScreen extends StatefulWidget {
@@ -15,14 +19,23 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  GlobalKey<SliderMenuContainerState> _key =
+      new GlobalKey<SliderMenuContainerState>();
   final _auth = FirebaseAuth.instance;
   final _controller = TextEditingController();
 
   String message;
 
+  void _toggle() {
+    _innerDrawerKey.currentState.toggle(
+        // direction is optional
+        // if not set, the last direction will be used
+        //InnerDrawerDirection.start OR InnerDrawerDirection.end
+        direction: InnerDrawerDirection.end);
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     getCurrentUser();
@@ -45,68 +58,81 @@ class _ChatScreenState extends State<ChatScreen> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: null,
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  _auth.signOut();
-                  Navigator.popUntil(
-                      context, ModalRoute.withName(LoginScreen.id));
-                  // getMessageStream();
-                }),
-          ],
-          title: Text('⚡️Chat'),
-          backgroundColor: Colors.lightBlueAccent,
-        ),
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              MessagesStream(),
-              Container(
-                decoration: kMessageContainerDecoration,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        onChanged: (value) {
-                          message = value;
-                        },
-                        decoration: kMessageTextFieldDecoration,
-                      ),
-                    ),
-                    FlatButton(
-                      onPressed: () {
-                        _controller.clear();
-                        if (message != null) {
-                          _firestore.collection('messages').add(
-                            {
-                              'text': message,
-                              'sender': loggedInUser.email,
-                              'messageTime': DateTime.now()
+      child: WillPopScope(
+        onWillPop: () =>
+            SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+        child: InnerDrawer(
+          key: _innerDrawerKey,
+          onTapClose: true,
+          swipe: true,
+          colorTransitionChild: Colors.white,
+          colorTransitionScaffold: Colors.white,
+          offset: IDOffset.only(bottom: 0.05, right: 0.0, left: 0.0),
+          scale: IDOffset.horizontal(0.8),
+          proportionalChildArea: true,
+          borderRadius: 50.0,
+          leftAnimationType: InnerDrawerAnimation.quadratic,
+          rightAnimationType: InnerDrawerAnimation.linear,
+          backgroundDecoration: BoxDecoration(color: Colors.blue),
+          onDragUpdate: (value, direction) {
+            print(value);
+            print(direction == InnerDrawerDirection.start);
+          },
+          innerDrawerCallback: (isOpened) => print(isOpened),
+          leftChild: Container(),
+          scaffold: Scaffold(
+            appBar: AppBar(
+              title: Text('⚡️Chat'),
+              backgroundColor: kPageBackgroundColor,
+            ),
+            body: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  MessagesStream(),
+                  Container(
+                    decoration: kMessageContainerDecoration,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            onChanged: (value) {
+                              message = value;
                             },
-                          );
-                          message = null;
-                        } else {
-                          return;
-                        }
-                      },
-                      child: Text(
-                        'Send',
-                        style: kSendButtonTextStyle,
-                      ),
+                            decoration: kMessageTextFieldDecoration,
+                          ),
+                        ),
+                        FlatButton(
+                          onPressed: () {
+                            _controller.clear();
+                            if (message != null) {
+                              _firestore.collection('messages').add(
+                                {
+                                  'text': message,
+                                  'sender': loggedInUser.email,
+                                  'messageTime': DateTime.now()
+                                },
+                              );
+                              message = null;
+                            } else {
+                              return;
+                            }
+                          },
+                          child: Text(
+                            'Send',
+                            style: kSendButtonTextStyle,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
