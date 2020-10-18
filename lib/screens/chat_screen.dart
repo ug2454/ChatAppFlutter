@@ -1,3 +1,5 @@
+import 'package:flash_chat/screens/login_screen.dart';
+import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
@@ -79,11 +81,53 @@ class _ChatScreenState extends State<ChatScreen> {
             print(direction == InnerDrawerDirection.start);
           },
           innerDrawerCallback: (isOpened) => print(isOpened),
-          leftChild: Container(),
+          leftChild: Scaffold(
+            backgroundColor: Colors.blue,
+            body: SafeArea(
+              child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          _auth.signOut();
+                          SchedulerBinding.instance.addPostFrameCallback((_) {
+                            //this will remove all the route stacks and make the landing page the root.
+                            Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                WelcomeScreen.id,
+                                (Route<dynamic> route) => false);
+                          });
+                        },
+                        child: Container(
+                            child: Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Sign Out',
+                                style: TextStyle(color: Colors.white,fontSize: 18.0),
+                              ),
+                            ),
+                          ],
+                        )))
+                  ],
+                ),
+              ),
+            ),
+          ),
           scaffold: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               title: Text('⚡️Chat'),
               backgroundColor: kPageBackgroundColor,
+              centerTitle: true,
             ),
             body: SafeArea(
               child: Column(
